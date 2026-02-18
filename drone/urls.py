@@ -15,4 +15,4 @@ urlpatterns = [
     path('confs/<int:conf_id>', detailed_configuration, name='detailed_confs'),
     path('comps', composants, name='comps'),
     path('comps/<int:comp_id>', detailed_composant, name='detailed_comps'),
-] + static(main_settings.MEDIA_URL, document_root=main_settings.MEDIA_ROOT)
+]

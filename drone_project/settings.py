@@ -133,6 +133,10 @@ MEDIA_ROOT = SITE_DIR / 'data' / 'media'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
 
+# Upload limits (500 MB for flight videos)
+DATA_UPLOAD_MAX_MEMORY_SIZE = 524288000
+FILE_UPLOAD_MAX_MEMORY_SIZE = 524288000
+
 # Markdownx configuration
 # https://neutronx.github.io/django-markdownx/
 MARKDOWNX_MARKDOWN_EXTENSIONS = [

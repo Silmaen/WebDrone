@@ -7,6 +7,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     default-libmysqlclient-dev \
     gcc \
     pkg-config \
+    nginx \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
@@ -18,7 +19,9 @@ COPY . .
 
 RUN mkdir -p /app/db
 
-EXPOSE 8000
+COPY nginx.conf /etc/nginx/sites-available/default
+
+EXPOSE 80
 
 ENTRYPOINT ["/app/entrypoint.sh"]
-CMD ["gunicorn", "drone_project.wsgi:application", "--bind", "0.0.0.0:8000"]
+CMD ["gunicorn", "drone_project.wsgi:application", "--bind", "127.0.0.1:8000"]
