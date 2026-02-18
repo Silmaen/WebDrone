@@ -1,0 +1,46 @@
+{% extends "drone/base.html" %}
+{%block topsection %}
+<div class="topcontent">
+    <h1>Les Configurations de drone</h1>
+</div>
+{%endblock%}
+
+
+{%block mainsection %}
+
+{% for conf in configurations %}
+<div class="Article">
+    <div class="ArticleHeader">
+        <a href ="{% url 'detailed_confs' conf.id %}"><h1>{{ conf }}</h1></a>
+    </div>
+    <div class="ArticleContent">
+        {% if conf.photo %}
+        <div class="image_desc"><img src="{{ conf.photo.url }}"></div>
+        {% endif %}
+        {{ conf.contenu_md| safe }}
+        <a href="{% url 'detailed_confs' conf.id %}" class="comment-btn comment-btn-small mdi mdi-loupe">Détails...</a>
+    </div>
+    <div class="ArticleFooter">
+        <div class="ArticleAuthor mdi mdi-engine-outline">{{ conf.version_logiciel }}</div>
+        <div class="ArticleComments mdi mdi-comment-outline">{{ conf.nb_comments }}</div>
+        <div class="ArticleDate mdi mdi-clock-fast">{{ conf.date }}</div>
+    </div>
+    {% if conf.nb_comments > 0 %}
+    <div class="Comments">
+        {% for cc in conf.get_comments %}
+            <div class="comment">
+                <div class="c_head">
+                    <div class="c_author mdi mdi-account-circle">{{cc.auteur}}</div>
+                    <div class="c_date mdi mdi-clock-fast">{{cc.date}}</div>
+                </div>
+                <div class="c_body">{{cc.contenu_md| safe}}</div>
+            </div>
+        {% endfor%}
+    </div>
+    {% endif %}
+</div>
+{% empty %}
+<p>Empty</p>
+{% endfor %}
+
+{%endblock%}

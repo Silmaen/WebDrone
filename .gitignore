@@ -205,3 +205,9 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+# Docker data (SQLite DB + media volumes)
+docker_data/
+
+# SQLite database directory
+db/

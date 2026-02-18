@@ -1,0 +1,43 @@
+{% extends "drone/base.html" %}
+{%block topsection %}
+<div class="topcontent">
+    <h1>Les Vols</h1>
+</div>
+{%endblock%}
+
+{%block mainsection %}
+{% for vol in vols %}
+<div class="Article">
+    <div class="ArticleHeader">
+        <a href ="{% url 'detailed_vols' vol.id %}"><h1>{{ vol }}</h1></a>
+    </div>
+    <div class="ArticleContent">
+        {{ vol.render_meteo|safe }}
+        {{ vol.contenu_md|safe }}
+        <a href="{% url 'detailed_vols' vol.id %}" class="comment-btn comment-btn-small mdi mdi-loupe">Détails...</a>
+    </div>
+    <div class="ArticleFooter">
+        <div class="ArticleAuthor">
+            <a href="{% url 'detailed_confs' vol.drone_configuration.id %}" class="mdi mdi-quadcopter">{{ vol.drone_configuration }}</a>
+        </div>
+        <div class="ArticleComments mdi mdi-comment-outline">{{ vol.nb_comments }}</div>
+        <div class="ArticleDate mdi mdi-clock-fast">{{ vol.date }}</div>
+    </div>
+    {% if vol.nb_comments > 0 %}
+    <div class="Comments">
+        {% for cc in vol.get_comments %}
+            <div class="comment">
+                <div class="c_head">
+                    <div class="c_author mdi mdi-account-circle">{{cc.auteur}}</div>
+                    <div class="c_date mdi mdi-clock-fast">{{cc.date}}</div>
+                </div>
+                <div class="c_body">{{cc.contenu_md| safe}}</div>
+            </div>
+        {% endfor%}
+    </div>
+    {% endif %}
+</div>
+{% empty %}
+<p>Empty</p>
+{% endfor %}
+{%endblock%}

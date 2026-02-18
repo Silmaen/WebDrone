@@ -1,0 +1,10 @@
+services:
+  web:
+    build: .
+    ports:
+      - "${PORT:-8000}:8000"
+    volumes:
+      - ${PATH_DATABASE:-./docker_data/db/}:/app/db/
+      - ${PATH_MEDIA:-./docker_data/media/}:/app/data/media/
+    env_file:
+      - .env

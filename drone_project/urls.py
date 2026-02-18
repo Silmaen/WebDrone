@@ -1,0 +1,10 @@
+"""drone_project URL Configuration."""
+from django.contrib import admin
+from django.urls import path, include
+
+urlpatterns = [
+    path('', include('drone.urls')),
+    path('profile/', include('connector.urls')),
+    path('admin/', admin.site.urls),
+    path('markdownx/', include('markdownx.urls')),
+]

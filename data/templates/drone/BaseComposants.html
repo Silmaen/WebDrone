@@ -1,0 +1,47 @@
+{% extends "drone/base.html" %}
+{% load static template_drone_extra %}
+{%block topsection %}
+<div class="topcontent">
+    <h1>Les Composants</h1>
+</div>
+{%endblock%}
+
+
+{%block mainsection %}
+
+{% for comp in composants %}
+<div class="Article">
+    <div class="ArticleHeader">
+        <a href ="{% url 'detailed_comps' comp.id %}"><h1>{{ comp.titre }}</h1>{{ comp.category.render_all|safe }}</a>
+    </div>
+    <div class="ArticleContent">
+        <div class="specifications">
+            <div class="image_desc"><img src="{{ comp.photo.url }}"></div>
+        </div>
+        {{ comp.contenu_md|safe}}
+        <a href="{% url 'detailed_comps' comp.id %}" class="comment-btn comment-btn-small mdi mdi-loupe">Détails...</a>
+    </div>
+    <div class="ArticleFooter">
+        <div class="ArticleAuthor"><a href="{{ comp.datasheet }}" class="mdi mdi-crane">Datasheet</a></div>
+        <div class="ArticleComments mdi mdi-comment-outline">{{ comp.nb_comments }}</div>
+        <div class="ArticleDate"></div>
+    </div>
+    {% if comp.nb_comments > 0 %}
+    <div class="Comments">
+        {% for cc in comp.get_comments %}
+            <div class="comment">
+                <div class="c_head">
+                    <div class="c_author mdi mdi-account-circle">{{cc.auteur}}</div>
+                    <div class="c_date mdi mdi-clock-fast">{{cc.date}}</div>
+                </div>
+                <div class="c_body">{{cc.contenu_md| safe}}</div>
+            </div>
+        {% endfor%}
+    </div>
+    {% endif %}
+</div>
+{% empty %}
+<p>Empty</p>
+{% endfor %}
+
+{%endblock%}

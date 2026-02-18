@@ -1,0 +1,30 @@
+{% extends "common_base.html" %}
+{% load static %}
+{% block favicon %}
+<link rel="shortcut icon" href="{% static 'img/favicon_profile.ico' %}"/>
+{% endblock %}
+{% block stylesheet %}
+<link rel="stylesheet" href="{% static 'css/default_profile.css' %}">
+{% endblock %}
+{% block content %}
+<header class="header-section">
+	<nav class="navbar container-fluid">
+		<a class="site-logo" href="/">
+			<img alt="logo" src="{% static 'img/profile/profile.png' %}"><h3>Argawaen.net Profile</h3>
+		</a>
+	</nav>
+</header>
+<section class="top-section">
+	{%block topsection %}
+	{%endblock%}
+</section>
+<section class="main-section">
+	{%block mainsection %}
+	{%endblock%}
+</section>
+<footer class="footer-section">
+	<p>&copy; Designed by Argawaen, all rights reserved.
+		The site design, the logo are trademarks and/or registered trademarks of Argawaen.</p>
+	{% if user.is_staff %}<a class="comment-btn mdi mdi-account-hard-hat" href="/admin">admin</a>{% endif %}
+</footer>
+{% endblock %}
