@@ -24,4 +24,4 @@ COPY nginx.conf /etc/nginx/sites-available/default
 EXPOSE 80
 
 ENTRYPOINT ["/app/entrypoint.sh"]
-CMD ["gunicorn", "drone_project.wsgi:application", "--bind", "127.0.0.1:8000"]
+CMD ["gunicorn", "drone_project.wsgi:application", "--bind", "127.0.0.1:8000", "--config", "gunicorn.conf.py"]
