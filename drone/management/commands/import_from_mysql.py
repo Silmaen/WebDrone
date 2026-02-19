@@ -34,7 +34,7 @@ class Command(BaseCommand):
             "OPTIONS": {"init_command": "SET sql_mode='STRICT_TRANS_TABLES'"},
         }
 
-        self.stdout.write("Connexion à MySQL {}:{}/{}...".format(mysql_host, mysql_port, mysql_name))
+        self.stdout.write(f"Connexion à MySQL {mysql_host}:{mysql_port}/{mysql_name}...")
 
         dump_file = None
         try:

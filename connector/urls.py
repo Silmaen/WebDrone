@@ -1,7 +1,15 @@
 """Fichier main.urls.py définissant les urls."""
 from django.urls import path
-from django.contrib.auth.views import *
-from .views import *
+from django.contrib.auth.views import (
+    LoginView,
+    LogoutView,
+    PasswordChangeView,
+    PasswordChangeDoneView,
+    PasswordResetDoneView,
+    PasswordResetConfirmView,
+    PasswordResetCompleteView,
+)
+from .views import profile, register, profile_edit, CustomPasswordResetView
 
 urlpatterns = [
     path('', profile, name="profile"),

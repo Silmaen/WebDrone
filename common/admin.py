@@ -1,4 +1,4 @@
-"""Les Pages d’admin commons"""
+"""Les Pages d'admin commons"""
 from django.contrib import admin
 from django.utils.text import Truncator
 from markdownx.admin import MarkdownxModelAdmin
@@ -15,7 +15,7 @@ class SiteArticleAdmin(admin.ModelAdmin):
     ordering = ('date',)
     search_fields = ('titre', 'contenu')
     prepopulated_fields = {'slug': ('titre',), }
-    # Configuration du formulaire d’édition
+    # Configuration du formulaire d'édition
     fieldsets = (
         # Fieldset 1 : meta-info (titre, auteur…)
         ('General', {
@@ -33,8 +33,7 @@ class SiteArticleAdmin(admin.ModelAdmin):
 
     def save_model(self, request, obj, form, change):
         obj.auteur = request.user
-        super(SiteArticleAdmin, self).save_model(request, obj, form, change)
-
+        super().save_model(request, obj, form, change)
 
     def content_overview(self, article):
         """
@@ -57,4 +56,4 @@ class SiteArticleCommentAdmin(MarkdownxModelAdmin):
 
     def save_model(self, request, obj, form, change):
         obj.auteur = request.user
-        super(SiteArticleCommentAdmin, self).save_model(request, obj, form, change)
+        super().save_model(request, obj, form, change)

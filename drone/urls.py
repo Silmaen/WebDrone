@@ -2,7 +2,16 @@
 from django.conf.urls.static import static
 from django.conf import settings as main_settings
 from django.urls import path
-from .views import *
+from .views import (
+    index,
+    detailed_article,
+    vols,
+    detailed_vol,
+    configurations,
+    detailed_configuration,
+    composants,
+    detailed_composant,
+)
 
 
 urlpatterns = [

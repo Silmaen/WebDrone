@@ -23,7 +23,6 @@ def register(request):
         form = CustomUserCreationForm(request.POST)
         profile_form = ProfileForm(request.POST)
         if form.is_valid() and profile_form.is_valid():
-            print("le formulaire est valide")
             user = form.save()
             profile_form.save()
             login(request, user)

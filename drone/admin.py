@@ -1,7 +1,17 @@
 """Configuration de l'administration"""
 from django.contrib import admin
 from .base_admin import SiteArticleAdmin, SiteArticleCommentAdmin
-from .models import *
+from .models import (
+    DroneArticle,
+    DroneArticleComment,
+    DroneComponent,
+    DroneComponentCategory,
+    DroneComponentComment,
+    DroneConfiguration,
+    DroneConfigurationComment,
+    DroneFlight,
+    DroneFlightComment,
+)
 
 
 class DroneArticleAdmin(SiteArticleAdmin):
@@ -11,7 +21,7 @@ class DroneArticleAdmin(SiteArticleAdmin):
     ordering = ('date',)
     search_fields = ('titre', 'contenu')
     prepopulated_fields = {'slug': ('titre',), }
-    # Configuration du formulaire d’édition
+    # Configuration du formulaire d'édition
     fieldsets = (
         # Fieldset 1 : meta-info (titre, auteur…)
         ('General', {

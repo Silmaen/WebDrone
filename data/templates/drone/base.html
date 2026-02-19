@@ -1,22 +1,7 @@
-<!DOCTYPE html>
+{% extends "common_base.html" %}
 {% load static template_drone_extra %}
-<html lang="fr">
-<head>
-<meta charset="UTF-8">
-<meta http-equiv="content-type" content="text/html; charset=utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="robots" content="index,follow">
-<meta name="author" content="Argawaen">
-<meta name="description" content="le contenu">
-<meta name="keywords" content="FUCK!!">
-<meta name="viewport" content="initial-scale=1, maximum-scale=1">
-<title>{% block title %}Lachouette Drone{% endblock %}</title>
-<link rel="shortcut icon" href="{% static 'img/favicon_drone.ico' %}"/>
-<link rel="stylesheet" href="{% static 'css/default_drone.css' %}">
-{%block additionnalhead %}
-{%endblock%}
-</head>
-<body>
+{% block title %}Lachouette Drone{% endblock %}
+{% block content %}
 <header class="header-section">
 	<nav class="navbar container-fluid">
 		<a class="site-logo" href="/">
@@ -45,19 +30,18 @@
 	</nav>
 </header>
 <section class="top-section">
-	{%block topsection %}
-	{%endblock%}
+	{% block topsection %}
+	{% endblock %}
 </section>
 <section class="main-section">
-	{%block mainsection %}
-	{%endblock%}
+	{% block mainsection %}
+	{% endblock %}
 </section>
-{%block additionnalsection %}
-{%endblock%}
+{% block additionnalsection %}
+{% endblock %}
 <footer class="footer-section">
 	<p>&copy; Designed by Argawaen, all rights reserved.
 		The site design, the logo are trademarks and/or registered trademarks of Argawaen.</p>
 	{% if user.is_staff %}<a class="comment-btn mdi mdi-account-hard-hat" href="/admin">admin</a>{% endif %}
 </footer>
-</body>
-</html>
+{% endblock %}

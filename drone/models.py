@@ -7,9 +7,6 @@ class DroneArticle(SiteArticle):
     """Les articles du site de drone"""
 
     class Meta:
-        """
-        Meta data
-        """
         verbose_name = "Article du site de drone"
         ordering = ['-date']
 
@@ -26,42 +23,31 @@ class DroneComponentCategory(models.Model):
 
     def render_onboard(self):
         """get icon for flying/ ground definition"""
-        #                              ground        flying
-        return '<span class="mdi ' + ["mdi-download", "mdi-upload"][self.onBoard] + '"></span>'
+        icon = "mdi-upload" if self.onBoard else "mdi-download"
+        return f'<span class="mdi {icon}"></span>'
 
     def render_name(self):
-        stri = '<span class="mdi '
-        if self.name == "Hélice":
-            stri += 'mdi-fan"></span><span>Hélice</span>'
-        elif self.name == "Batterie":
-            stri += 'mdi-battery-outline"></span><span>Batterie</span>'
-        elif self.name == "Moteur":
-            stri += 'mdi-cog-outline"></span><span>Moteur</span>'
-        elif self.name == "ESC (contrôleur de puissance moteur)":
-            stri += 'mdi-car-cruise-control"></span><span>ESC</span>'
-        elif self.name == "Caméra":
-            stri += 'mdi-video-outline"></span><span>Caméra</span>'
-        elif self.name == "VTX (transmetteur vidéo)":
-            stri += 'mdi-video-wireless-outline"></span><span>VTX</span>'
-        elif self.name == "Récepteur Vidéo":
-            stri += 'mdi-camera-wireless-outline"></span><span>VRX</span>'
-        elif self.name == "Télécommande":
-            stri += 'mdi-controller-classic-outline"></span><span>Télécommande</span>'
-        elif self.name == "Récepteur télémétrie":
-            stri += 'mdi-home-thermometer-outline></span><span>Télémétrie sol</span>'
-        elif self.name == "Module de radio commande":
-            stri += 'mdi-antenna"></span><span>radio commande</span>'
-        elif self.name == "Distributeur de puissance":
-            stri += 'mdi-power-plug-outline"></span><span>Distributeur de puissance</span>'
-        elif self.name == "Module de Télémétrie":
-            stri += 'mdi-router-wireless"></span><span>Module Telemétrie</span>'
-        elif self.name == "Controleur de vol":
-            stri += 'mdi-chip"></span><span>radio commande</span>'
-        elif self.name == "Cadre":
-            stri += 'mdi-quadcopter"></span><span>Cadre</span>'
+        icons = {
+            "Hélice": ('mdi-fan', "Hélice"),
+            "Batterie": ('mdi-battery-outline', "Batterie"),
+            "Moteur": ('mdi-cog-outline', "Moteur"),
+            "ESC (contrôleur de puissance moteur)": ('mdi-car-cruise-control', "ESC"),
+            "Caméra": ('mdi-video-outline', "Caméra"),
+            "VTX (transmetteur vidéo)": ('mdi-video-wireless-outline', "VTX"),
+            "Récepteur Vidéo": ('mdi-camera-wireless-outline', "VRX"),
+            "Télécommande": ('mdi-controller-classic-outline', "Télécommande"),
+            "Récepteur télémétrie": ('mdi-home-thermometer-outline', "Télémétrie sol"),
+            "Module de radio commande": ('mdi-antenna', "radio commande"),
+            "Distributeur de puissance": ('mdi-power-plug-outline', "Distributeur de puissance"),
+            "Module de Télémétrie": ('mdi-router-wireless', "Module Telemétrie"),
+            "Controleur de vol": ('mdi-chip', "radio commande"),
+            "Cadre": ('mdi-quadcopter', "Cadre"),
+        }
+        if self.name in icons:
+            icon, label = icons[self.name]
         else:
-            stri += 'mdi-cogs"></span><span>' + str(self.name) + '</span>'
-        return stri
+            icon, label = 'mdi-cogs', str(self.name)
+        return f'<span class="mdi {icon}"></span><span>{label}</span>'
 
     def render_all(self):
         return self.render_name() + self.render_onboard()
@@ -82,20 +68,17 @@ class DroneComponent(SiteArticle):
                               verbose_name="Photo du composant")
 
     class Meta:
-        """
-        Meta data for drone
-        """
         verbose_name = "Composant de Drone"
         ordering = ['category', 'titre']
 
     def save(self, *args, **kwargs):
         """
-        Surcharge de l’opérateur save pour bien définir le champ private.
+        Surcharge de l'opérateur save pour bien définir le champ private.
         """
         self.staff = False
         self.private = False
         self.superprivate = False
-        super(DroneComponent, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
 
 class DroneConfiguration(SiteArticle):
@@ -113,20 +96,17 @@ class DroneConfiguration(SiteArticle):
                               verbose_name="Photo de la configuration")
 
     class Meta:
-        """
-        Meta data for drone configuration
-        """
         verbose_name = "Configuration Drone"
         ordering = ['-date']
 
     def save(self, *args, **kwargs):
         """
-        Surcharge de l’opérateur save pour bien définir le champ private.
+        Surcharge de l'opérateur save pour bien définir le champ private.
         """
         self.staff = False
         self.private = False
         self.superprivate = False
-        super(DroneConfiguration, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
 
 class DroneFlight(SiteArticle):
@@ -145,20 +125,17 @@ class DroneFlight(SiteArticle):
                              verbose_name="Vidéo du vol")
 
     class Meta:
-        """
-        Meta data for drone
-        """
         verbose_name = "Vol de  Drone"
         ordering = ['-date']
 
     def save(self, *args, **kwargs):
         """
-        Surcharge de l’opérateur save pour bien définir le champ private.
+        Surcharge de l'opérateur save pour bien définir le champ private.
         """
         self.staff = False
         self.private = False
         self.superprivate = False
-        super(DroneFlight, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     def render_meteo(self):
         """
@@ -168,30 +145,33 @@ class DroneFlight(SiteArticle):
         ret += '  <span class="mdi mdi-weather-windy-variant"></span>'
         ret += '  <div class="meteo_couverture">Météo: '
         if "couverture" in self.meteo:
-            if self.meteo["couverture"] in ["ensoleillé", "dégagé"]:
+            couverture = self.meteo["couverture"]
+            if couverture in ["ensoleillé", "dégagé"]:
                 ret += '<span class="mdi mdi-weather-sunny"></span>\n'
-            elif self.meteo["couverture"] in ["partiellement couvert"]:
+            elif couverture in ["partiellement couvert"]:
                 ret += '<span class="mdi mdi-weather-partly-cloudy"></span>\n'
-            elif self.meteo["couverture"] in ["couvert"]:
+            elif couverture in ["couvert"]:
                 ret += '<span class="mdi mdi-weather-cloudy"></span>\n'
-            elif self.meteo["couverture"] in ["brumeux"]:
+            elif couverture in ["brumeux"]:
                 ret += '<span class="mdi mdi-weather-hazy"></span>\n'
-            elif self.meteo["couverture"] in ["brouillard"]:
+            elif couverture in ["brouillard"]:
                 ret += '<span class="mdi mdi-weather-fog"></span>\n'
             else:
-                ret += '<span class="mdi mdi-weather-cloudy-alert">' + self.meteo["couverture"] + '</span>\n'
+                ret += f'<span class="mdi mdi-weather-cloudy-alert">{couverture}</span>\n'
         else:
             ret += '<span class="mdi mdi-weather-sunny"></span>\n'
         ret += '  </div>\n'
         if "force_vent" in self.meteo:
+            force_vent = self.meteo["force_vent"]
             ret += '  <div class="meteo_force_vent"> '
             ret += '<span class="mdi mdi-weather-windy"></span>'
-            ret += '<span>' + self.meteo["force_vent"] + '</span>'
+            ret += f'<span>{force_vent}</span>'
             ret += '  </div>\n'
         if "direction_vent" in self.meteo:
+            direction_vent = self.meteo["direction_vent"]
             ret += '  <div class="meteo_direction_vent">'
             ret += '<span class="mdi mdi-compass-rose"></span>'
-            ret += '<span>' + self.meteo["direction_vent"] + '</span>'
+            ret += f'<span>{direction_vent}</span>'
             ret += '  </div>\n'
         ret += '</div>\n'
         return ret
@@ -199,47 +179,35 @@ class DroneFlight(SiteArticle):
 
 class DroneArticleComment(SiteArticleComment):
     """
-    Classe pour les commentaires d’article
+    Classe pour les commentaires d'article
     """
     class Meta:
-        """
-        Meta data
-        """
         verbose_name = "Commentaire d'article de drone"
         ordering = ['-date']
 
 
 class DroneComponentComment(SiteArticleComment):
     """
-    Classe pour les commentaires d’article
+    Classe pour les commentaires d'article
     """
     class Meta:
-        """
-        Meta data
-        """
         verbose_name = "Commentaire de composant de drone"
         ordering = ['-date']
 
 
 class DroneConfigurationComment(SiteArticleComment):
     """
-    Classe pour les commentaires d’article
+    Classe pour les commentaires d'article
     """
     class Meta:
-        """
-        Meta data
-        """
         verbose_name = "Commentaire de configuration de drone"
         ordering = ['-date']
 
 
 class DroneFlightComment(SiteArticleComment):
     """
-    Classe pour les commentaires d’article
+    Classe pour les commentaires d'article
     """
     class Meta:
-        """
-        Meta data
-        """
         verbose_name = "Commentaire de vol de drone"
         ordering = ['-date']

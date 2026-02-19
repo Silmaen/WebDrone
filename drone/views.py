@@ -1,4 +1,5 @@
 """La definition des vues"""
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
 
 from . import settings
@@ -16,18 +17,19 @@ def index(request):
     """
     if request.user.is_authenticated:
         articles = DroneArticle.objects.order_by('-date')[:15]
-        return render(request, "drone/BaseArticles.html", {
+        return render(request, "drone/base_articles.html", {
             **settings.base_info,
             "page": "news",
             "articles": articles
         })
     else:
-        return render(request, "drone/BaseArticles.html", {
+        return render(request, "drone/base_articles.html", {
             **settings.base_info,
             "page": "news", "articles": []
         })
 
 
+@login_required
 def detailed_article(request, article_id):
     """
     page for one article with details
@@ -35,8 +37,6 @@ def detailed_article(request, article_id):
     :param article_id: the id of the article to find
     :return: the rendered page
     """
-    if not request.user.is_authenticated:
-        return redirect("/")
     article = get_object_or_404(DroneArticle, pk=article_id)
     new_comment = None
     # comment posted
@@ -56,7 +56,7 @@ def detailed_article(request, article_id):
             new_comment.save()
     else:
         comment_form = DroneArticleCommentForm()
-    return render(request, "drone/DetailedArticle.html", {
+    return render(request, "drone/detailed_article.html", {
         **settings.base_info,
         "page": "news",
         "article": article,
@@ -65,21 +65,21 @@ def detailed_article(request, article_id):
     })
 
 
+@login_required
 def vols(request):
     """
     Main Page
     :param request: the page request
     :return: the rendered page
     """
-    if not request.user.is_authenticated:
-        return redirect("/")
     df = DroneFlight.objects.order_by("-date")
-    return render(request, "drone/BaseFlight.html", {
+    return render(request, "drone/base_flight.html", {
         **settings.base_info,
         "page": "vols", "vols": df
     })
 
 
+@login_required
 def detailed_vol(request, vol_id):
     """
     page for one article with details
@@ -87,8 +87,6 @@ def detailed_vol(request, vol_id):
     :param vol_id: the id of the flight to find
     :return: the rendered page
     """
-    if not request.user.is_authenticated:
-        return redirect("/")
     vol = get_object_or_404(DroneFlight, pk=vol_id)
     new_comment = None
     # comment posted
@@ -108,7 +106,7 @@ def detailed_vol(request, vol_id):
             new_comment.save()
     else:
         comment_form = DroneFlightCommentForm()
-    return render(request, "drone/DetailedFlight.html", {
+    return render(request, "drone/detailed_flight.html", {
         **settings.base_info,
         "page": "vols",
         "vol": vol,
@@ -117,21 +115,21 @@ def detailed_vol(request, vol_id):
     })
 
 
+@login_required
 def configurations(request):
     """
     Main Page
     :param request: the page request
     :return: the rendered page
     """
-    if not request.user.is_authenticated:
-        return redirect("/")
     dc = DroneConfiguration.objects.order_by('-version_number')
-    return render(request, "drone/BaseConfiguration.html", {
+    return render(request, "drone/base_configuration.html", {
         **settings.base_info,
         "page": "confs", "configurations": dc
     })
 
 
+@login_required
 def detailed_configuration(request, conf_id):
     """
     page for one article with details
@@ -139,8 +137,6 @@ def detailed_configuration(request, conf_id):
     :param conf_id: the id of the article to find
     :return: the rendered page
     """
-    if not request.user.is_authenticated:
-        return redirect("/")
     dc = get_object_or_404(DroneConfiguration, pk=conf_id)
     new_comment = None
     # comment posted
@@ -160,7 +156,7 @@ def detailed_configuration(request, conf_id):
             new_comment.save()
     else:
         comment_form = DroneConfigurationCommentForm()
-    return render(request, "drone/DetailedConfiguration.html", {
+    return render(request, "drone/detailed_configuration.html", {
         **settings.base_info,
         "page": "confs",
         "conf": dc,
@@ -169,21 +165,21 @@ def detailed_configuration(request, conf_id):
     })
 
 
+@login_required
 def composants(request):
     """
     Main Page
     :param request: the page request
     :return: the rendered page
     """
-    if not request.user.is_authenticated:
-        return redirect("/")
     dc = DroneComponent.objects.order_by("titre")
-    return render(request, "drone/BaseComposants.html", {
+    return render(request, "drone/base_composants.html", {
         **settings.base_info,
         "page": "comps", "composants": dc
     })
 
 
+@login_required
 def detailed_composant(request, comp_id):
     """
     page for one article with details
@@ -191,8 +187,6 @@ def detailed_composant(request, comp_id):
     :param comp_id: the id of the article to find
     :return: the rendered page
     """
-    if not request.user.is_authenticated:
-        return redirect("/")
     dc = get_object_or_404(DroneComponent, pk=comp_id)
     new_comment = None
     # comment posted
@@ -212,7 +206,7 @@ def detailed_composant(request, comp_id):
             new_comment.save()
     else:
         comment_form = DroneComponentCommentForm()
-    return render(request, "drone/DetailedComposant.html", {
+    return render(request, "drone/detailed_composant.html", {
         **settings.base_info,
         "page": "comps",
         "comp": dc,

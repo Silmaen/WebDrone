@@ -44,7 +44,7 @@ The project is containerised with Docker Compose. Configuration is in `Dockerfil
 
 All secrets and runtime settings are read from environment variables (`os.environ`) in `drone_project/settings.py`:
 
-- `SECRET_KEY`, `DEBUG` (default `0`), `ALLOWED_HOSTS`
+- `SECRET_KEY`, `DEBUG` (default `0`), `ALLOWED_HOSTS`, `CSRF_TRUSTED_ORIGINS`
 - `EMAIL_HOST`, `EMAIL_PORT`, `EMAIL_HOST_USER`, `EMAIL_HOST_PASSWORD`, `EMAIL_USE_TLS`
 - `PORT`, `PATH_DATABASE`, `PATH_MEDIA` (Docker Compose only)
 - `MYSQL_*` variables (used only by `import_from_mysql` command)
@@ -92,6 +92,6 @@ Static files are served via WhiteNoise middleware in production. `collectstatic`
 ## Notes
 
 - This is a traditional server-rendered Django app — no REST API, no JS framework.
-- The frontend uses Bootstrap 4.5.3, jQuery 3.5.1, and Material Design Icons 5.4.55, all from CDN.
+- The frontend uses Bootstrap 5.3.3 and Material Design Icons 7.4.47, all from CDN (no jQuery).
 - Test coverage is minimal: a single test in `drone/tests.py` checks the index page returns HTTP 200.
 - Language is `fr`, timezone is `Europe/Paris`.
