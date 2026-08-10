@@ -1,10 +1,37 @@
 services:
   web:
     build: .
-    ports:
-      - "${PORT:-8000}:80"
+    restart: unless-stopped
+    expose:
+      - "8000"
     volumes:
       - ${PATH_DATABASE:-./docker_data/db/}:/app/db/
       - ${PATH_MEDIA:-./docker_data/media/}:/app/data/media/
+      - ${PATH_STATIC:-./docker_data/static/}:/app/staticfiles/
     env_file:
       - .env
+    healthcheck:
+      test: ["CMD", "python", "-c", "import socket; socket.create_connection(('127.0.0.1', 8000), timeout=5).close()"]
+      interval: 30s
+      timeout: 10s
+      start_period: 40s
+      retries: 3
+
+  nginx:
+    image: nginx:1.27-alpine
+    restart: unless-stopped
+    ports:
+      - "${PORT:-8180}:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - ${PATH_MEDIA:-./docker_data/media/}:/app/data/media/:ro
+      - ${PATH_STATIC:-./docker_data/static/}:/app/staticfiles/:ro
+    depends_on:
+      web:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1/healthz"]
+      interval: 30s
+      timeout: 10s
+      start_period: 10s
+      retries: 3

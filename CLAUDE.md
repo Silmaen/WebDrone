@@ -31,14 +31,19 @@ There is no linting, formatting, or CI/CD configuration.
 
 ## Docker Setup
 
-The project is containerised with Docker Compose. Configuration is in `Dockerfile`, `docker-compose.yml`, and `entrypoint.sh`.
+The project is containerised with Docker Compose. Configuration is in `Dockerfile`, `docker-compose.yml`, `nginx.conf`, `gunicorn.conf.py`, and `entrypoint.sh`.
 
-- **Image**: `python:3.9-slim` with MySQL client libraries (for `import_from_mysql`).
-- **Entrypoint**: Runs `migrate` and `collectstatic` automatically before starting gunicorn on port 8000.
-- **Volumes** (configurable via `.env`):
-  - `${PATH_DATABASE:-./docker_data/db/}` → `/app/db/` (SQLite database)
-  - `${PATH_MEDIA:-./docker_data/media/}` → `/app/data/media/` (uploaded files)
+Two services, each with `restart: unless-stopped` and its own healthcheck, so Docker supervises both processes independently:
+
+- **`web`** — built from `Dockerfile` (`python:3.12-slim` + MySQL client libraries for `import_from_mysql`). Entrypoint runs `migrate` and `collectstatic`, then execs gunicorn on `0.0.0.0:8000`. Not published to the host; reachable only on the compose network. Healthcheck: TCP connect to port 8000.
+- **`nginx`** — official `nginx:1.27-alpine`, publishes `${PORT:-8180}:80`, serves `/static/` and `/media/` directly and reverse-proxies the rest to `web:8000`. Waits on `web` via `depends_on: condition: service_healthy`. Healthcheck: `GET /healthz`, an nginx-level `return 200` that touches neither gunicorn nor Django.
+- **Volumes** (configurable via `.env`, all bind mounts relative to the project directory):
+  - `${PATH_DATABASE:-./docker_data/db/}` → `/app/db/` (SQLite database, `web` only)
+  - `${PATH_MEDIA:-./docker_data/media/}` → `/app/data/media/` (uploaded files; rw on `web`, ro on `nginx`)
+  - `${PATH_STATIC:-./docker_data/static/}` → `/app/staticfiles/` (`collectstatic` output; rw on `web`, ro on `nginx`)
 - **Environment**: All secrets and settings read from `.env` (see `.env.sample` for the template).
+
+`nginx.conf` proxies via a variable (`set $upstream` + `resolver 127.0.0.11`) rather than a literal upstream name, so nginx re-resolves `web` per request instead of pinning its IP at startup — without this, recreating `web` leaves nginx serving 502s.
 
 ## Configuration & Secrets
 
@@ -87,7 +92,7 @@ SQLite backend (`django.db.backends.sqlite3`), stored at `BASE_DIR / 'db' / 'db.
 
 ### Static Files
 
-Static files are served via WhiteNoise middleware in production. `collectstatic` gathers files into `staticfiles/` at container startup. Source assets are in `data/static/` (CSS and images for drone and profile apps).
+Under Docker, static files are served by the `nginx` service straight from the shared `staticfiles/` volume — requests never reach Django. WhiteNoise is still in `MIDDLEWARE` and remains the fallback outside Docker (e.g. `runserver`). `collectstatic` gathers files into `staticfiles/` at `web` startup. Source assets are in `data/static/` (CSS and images for drone and profile apps).
 
 ## Notes
 
