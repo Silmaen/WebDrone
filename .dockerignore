@@ -1,0 +1,35 @@
+# The Dockerfile ends on `COPY . .`, so anything not excluded here is baked into the
+# image. Three of these are not just weight:
+#
+#   docker_data/  is the *runtime* state -- the SQLite database and 300+ MB of uploaded
+#                 media. Copying it in would ship a snapshot of production inside the
+#                 image, then shadow it with the bind mount at run time: a stale copy
+#                 nobody reads, in every layer of every build.
+#   .env          holds the secrets. The container gets them through `env_file` at run
+#                 time; a copy inside the image is a copy that leaks with the image.
+#   db/           same as docker_data/db for a checkout that ran `runserver` natively.
+#
+docker_data/
+db/
+.env
+
+.git/
+.gitignore
+.idea/
+.vscode/
+.claude/
+
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+venv/
+.venv/
+
+# collectstatic writes this inside the container, at startup, onto a mounted volume.
+staticfiles/
+
+*.log
+*.sqlite3

@@ -2,6 +2,15 @@ services:
   web:
     build: .
     restart: unless-stopped
+    # Built here, so this image exists in no registry: wud was looking up
+    # `library/webdrone-web:latest` on Docker Hub and reporting a 401 for it, once per
+    # scan. Nothing is lost by excluding it -- what this image really tracks is the
+    # Dockerfile's base, and `deploy.sh` pulls that at every deployment. Bumping the
+    # base is therefore a manual review of the Dockerfile's FROM, deliberately: the
+    # ceiling is set by the Django version in requirements.txt, not by what Docker Hub
+    # happens to offer.
+    labels:
+      wud.watch: 'false'
     expose:
       - "8000"
     volumes:
@@ -18,8 +27,31 @@ services:
       retries: 3
 
   nginx:
-    image: nginx:1.27-alpine
+    # Stable branch, pinned to the patch. 1.27 was the mainline of a cycle that ended:
+    # the tag still exists but is never rebuilt, so it had stopped receiving both the
+    # nginx and the alpine fixes.
+    image: nginx:1.30.4-alpine
     restart: unless-stopped
+    # Left to itself, wud picks the "greatest" tag of the repository, which on nginx
+    # means the mainline branch -- and mainline is not an update of stable, it is a
+    # different branch. nginx numbers them by parity: even minors (1.28, 1.30, 1.32)
+    # are stable, odd ones (1.29, 1.31) are mainline. Hence `\d*[02468]` on the minor
+    # rather than the `\d+` the shape would suggest: it keeps 1.30.5 and the next
+    # stable branch as news, and drops 1.31.x as noise.
+    #
+    # Check both directions when touching this regex. One that excludes the tag being
+    # run leaves wud nothing to compare and it answers "up to date" for ever -- a
+    # silent failure, unlike the noise it replaces. `1.30.4-alpine` matches.
+    #
+    # watch.digest on top of it, because the two signals are not the same one: the tag
+    # answers "a newer nginx exists" and needs a commit here, the digest answers "this
+    # very tag was rebuilt" -- an alpine CVE, usually -- and needs only the pull
+    # `deploy.sh` already does.
+    #
+    # $$ and not $: compose interpolates the value, the container must receive one $.
+    labels:
+      wud.tag.include: '^\d+\.\d*[02468]\.\d+-alpine$$'
+      wud.watch.digest: 'true'
     ports:
       - "${PORT:-8180}:80"
     volumes:
